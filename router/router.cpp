@@ -26,6 +26,11 @@ int printNum=0;
 
 int fd;
 
+
+/*
+**** receive thread
+**** update local routertable via update packages
+*/
 void* receive(void* ptr)
 {
 	while(1)
@@ -48,6 +53,11 @@ void* receive(void* ptr)
 	}
 }
 
+
+/*
+**** send thread
+**** send update packages to neighbours every 5 sec
+*/
 int main(int argc, char* argv[])
 {
 	if(argc != 3)

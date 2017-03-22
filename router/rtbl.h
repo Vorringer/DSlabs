@@ -7,17 +7,17 @@ struct RouterEntry
 {
 	RouterEntry(string dst, string nextHop, double cost, int seqNum);
 	RouterEntry();
-	string dst;
-	string nextHop;
-	double cost;
-	int seqNum;
+	string dst;       //destination
+	string nextHop;   // next hop to the dst
+	double cost;      // total length to the dst
+	int seqNum;       // sequence number
 };
 
 struct Host
 {
-	string name;
-	int seqNum;
-	int degree;
+	string name;     //name of the host
+	int seqNum;      //sequence number
+	int degree;      //number of neighbours
 };
 
 bool isEqualEntry(const RouterEntry& e1, const RouterEntry& e2);

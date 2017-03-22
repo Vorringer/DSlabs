@@ -9,42 +9,10 @@
 
 using namespace std;
 
-int udpBind(int port)
-{	
-	//create socket
-	int fd = socket(AF_INET, SOCK_DGRAM, 0);
-	if(fd == -1)
-	{
-		perror("creat error\n");
-		return -1;
-	}
-	
-	//printf("create socket, fd: %d\n", fd);
-	
-	//build connection
-	struct sockaddr_in siMe;
-	memset((char *) &siMe, 0, sizeof(siMe));
-	
-	siMe.sin_family = AF_INET;
-	siMe.sin_port = htons(port);
-	siMe.sin_addr.s_addr = inet_addr("127.0.0.1");
-	
-	int r = bind(fd, (struct sockaddr*)&siMe, sizeof(siMe));
-	if(r == -1)
-	{
-		perror("bind error\n");
-		close(fd);
-		return -1;
-	}
-	//printf("bind successfully!\n");
-	return fd;
-	
-}
+#define LOCALHOST "127.0.0.1"
 
 int udpSend(int fd, int port, string info)
 {
-	//build buffer
-	
 	char *buf = new char[BUFFERSIZE];
 	memset(buf, '\0', BUFFERSIZE);
 	strcpy(buf, info.c_str());
@@ -55,11 +23,8 @@ int udpSend(int fd, int port, string info)
 	
 	siTo.sin_family = AF_INET;
 	siTo.sin_port = htons(port);
-	siTo.sin_addr.s_addr = inet_addr("127.0.0.1");
-	
-	
-	//printf("socketSend %s\n", buf);
-	
+	siTo.sin_addr.s_addr = inet_addr(LOCALHOST);
+		
 	//send content
 	int r = sendto(fd, buf, BUFFERSIZE - 1, 0, (struct sockaddr*)&siTo, sizeof(siTo));
 	if(r == -1)
@@ -86,14 +51,37 @@ int udpReceive(int fd, string &info)
 	if(r > 0)
 	{
 		int port = ntohs(siFrom.sin_port);
-	
-		//read buffer
 		info = string(buf);
 		return port;
 	}
-	//perror("receive error\n");
 	return -1;
 	
+}
+
+int udpBind(int port)
+{	
+	//create socket
+	int fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if(fd == -1)
+	{
+		perror("creat error\n");
+		return -1;
+	}
+	//build connection
+	struct sockaddr_in siMe;
+	memset((char *) &siMe, 0, sizeof(siMe));
 	
+	siMe.sin_family = AF_INET;
+	siMe.sin_port = htons(port);
+	siMe.sin_addr.s_addr = inet_addr(LOCALHOST);
+	
+	int r = bind(fd, (struct sockaddr*)&siMe, sizeof(siMe));
+	if(r == -1)
+	{
+		perror("bind error\n");
+		close(fd);
+		return -1;
+	}
+	return fd;
 	
 }

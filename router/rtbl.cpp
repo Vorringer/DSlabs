@@ -13,17 +13,30 @@ RouterEntry::RouterEntry(string dst, string nextHop, double cost, int seqNum)
          :dst(dst),nextHop(nextHop),cost(cost),seqNum(seqNum){};
 
 
-
+/*
+***  compare two RouterEntry
+***  if equal return TRUE else return FALSE
+*/
 bool isEqualEntry(const RouterEntry& e1, const RouterEntry& e2)
 {
 	return e1.dst==e2.dst && e1.nextHop==e2.nextHop && ((e1.cost<0 && e2.cost<0) || fabs(e1.cost-e2.cost)<0.000001);
 }
 
+
+/*
+***  print info of one single entry 
+***  For Debug
+*/
 int printEntry(RouterEntry& entry)
 {
 	printf("dst:%s nextHop:%s cost:%lf\n",entry.dst.c_str(),entry.nextHop.c_str(),entry.cost);
 }
 
+/*
+***  read local router information and update the local router table
+     return 1 if there're changes in router information
+     else return 0
+*/
 int initRouterTable
 (string fileName, map<string, RouterEntry>& lastTable,map<string, RouterEntry>& routerTable, map<int, string>& portTable, Host& host)
 {
@@ -99,6 +112,10 @@ int initRouterTable
 	return changed;
 }
 
+/*
+***  pack the information of router table into string,
+***  which helps in sending update packages
+*/
 int packRouterInfo(string& info, map<string, RouterEntry>& routerTable, Host& host)
 {
 	ostringstream osst;
@@ -111,6 +128,10 @@ int packRouterInfo(string& info, map<string, RouterEntry>& routerTable, Host& ho
 	return 0;
 }
 
+
+/*
+***  contrary to packRouterInfo(), build routerTable from package string
+*/
 int unpackRouterInfo(string info, map<string, RouterEntry>& tempTable, Host& src)
 {
 	istringstream isst(info);
@@ -129,6 +150,11 @@ int unpackRouterInfo(string info, map<string, RouterEntry>& tempTable, Host& src
 
 }
 
+/*
+***  update local router table via update packages
+***  use information with larger seqNum
+***  choose the shorter path when seqNums equal
+*/
 int updateRouterTable(map<string,RouterEntry>& rawTable,map<string,RouterEntry>& newTable, map<string, RouterEntry>& currTable, Host src, Host& host)
 {
 	bool flag=false;
@@ -193,6 +219,10 @@ int updateRouterTable(map<string,RouterEntry>& rawTable,map<string,RouterEntry>&
 	return flag;
 }
 
+
+/*
+*** print the router table in format
+*/
 int printTable(int number, map<string, RouterEntry>& routerTable, Host host)
 {
 	printf("## print-out number %d\n",number);
